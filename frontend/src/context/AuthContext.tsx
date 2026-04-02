@@ -23,7 +23,7 @@ interface AuthContextValue {
   initialized: boolean;
   getDefaultDashboardPath: () => string;
   login: (email: string, password: string) => Promise<AuthUser>;
-  loginWithGoogleToken: (idToken: string) => Promise<AuthUser>;
+  // loginWithGoogleToken: (idToken: string) => Promise<AuthUser>;
   signup: (
     name: string,
     email: string,
@@ -86,14 +86,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [persistAuth],
   );
 
-  const loginWithGoogleToken = useCallback(
-    async (idToken: string) => {
-      const response = await loginWithGoogle(idToken);
-      persistAuth(response.user, response.access_token);
-      return response.user;
-    },
-    [persistAuth],
-  );
+  // const loginWithGoogleToken = useCallback(
+  //   async (idToken: string) => {
+  //     const response = await loginWithGoogle(idToken);
+  //     persistAuth(response.user, response.access_token);
+  //     return response.user;
+  //   },
+  //   [persistAuth],
+  // );
 
   const signup = useCallback(
     async (
@@ -129,15 +129,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       initialized,
       getDefaultDashboardPath,
       login,
-      loginWithGoogleToken,
       signup,
       logout,
     }),
     [
       getDefaultDashboardPath,
       initialized,
-      login,
-      loginWithGoogleToken,
       logout,
       signup,
       token,

@@ -35,7 +35,7 @@ export default function Navbar() {
           <Link href="#home" className="hover:text-blue-500 transition">Home</Link>
           <Link href="#about" className="hover:text-blue-500 transition">About Us</Link>
           <Link href="#features" className="hover:text-blue-500 transition">Features</Link>
-          <Link href="#contact" className="hover:text-blue-500 transition">Contact</Link>
+          <Link href="#contact" className="hover:text-blue-500 transition">Contact Us</Link>
         </div>
 
         <button 

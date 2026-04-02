@@ -10,6 +10,8 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "Report Missing", href: "/report-missing" },
   { label: "Report Found", href: "/report-found" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact Us", href: "/contact" },
   { label: "Dashboard", href: "/dashboard", role: "user" },
   { label: "Authority", href: "/admin", role: "authority" },
 ];

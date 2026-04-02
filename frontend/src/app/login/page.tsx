@@ -14,89 +14,13 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, loginWithGoogleToken } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    const initGoogle = () => {
-      const windowWithGoogle = window as typeof window & {
-        google?: {
-          accounts: {
-            id: {
-              initialize: (config: {
-                client_id: string;
-                callback: (response: { credential?: string }) => void;
-              }) => void;
-              renderButton: (
-                parent: HTMLElement,
-                options: Record<string, string>,
-              ) => void;
-            };
-          };
-        };
-      };
-
-      const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-      if (!googleClientId || !windowWithGoogle.google) {
-        return;
-      }
-
-      const target = document.getElementById("google-login-button");
-      if (!target) {
-        return;
-      }
-
-      windowWithGoogle.google.accounts.id.initialize({
-        client_id: googleClientId,
-        callback: async (response) => {
-          if (!response.credential) {
-            setError("Google login failed. No credential returned.");
-            return;
-          }
-
-          setError("");
-          setGoogleLoading(true);
-          try {
-            const signedInUser = await loginWithGoogleToken(
-              response.credential,
-            );
-            const redirect =
-              new URLSearchParams(window.location.search).get("redirect") ||
-              (signedInUser.role === "authority" ? "/admin" : "/dashboard");
-            router.push(redirect);
-          } catch (loginError) {
-            const message =
-              loginError instanceof Error
-                ? loginError.message
-                : "Google login failed. Please try again.";
-            setError(message);
-          } finally {
-            setGoogleLoading(false);
-          }
-        },
-      });
-
-      target.innerHTML = "";
-      windowWithGoogle.google.accounts.id.renderButton(target, {
-        theme: "outline",
-        size: "large",
-        text: "signin_with",
-        shape: "pill",
-      });
-    };
-
-    initGoogle();
-    window.addEventListener("google-loaded", initGoogle);
-
-    return () => {
-      window.removeEventListener("google-loaded", initGoogle);
-    };
-  }, [loginWithGoogleToken, router]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
