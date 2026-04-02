@@ -149,7 +149,27 @@ def create_missing():
     db.session.add(report)
     db.session.commit()
 
+    # AI matching — check against ALL existing found reports
+    found_reports = FoundReport.query.all()
+    for f in found_reports:
+        try:
+            from face_match import compare_faces
+            result = compare_faces(filepath, f.image_path)
+            # if result.get("match") and result.get("distance", 1) < 0.4:
+            if result.get("distance", 1) < 0.68:
+                alert = Alert(
+                    missing_id=report.id,
+                    found_id=f.id,
+                    similarity=1 - result["distance"]
+                )
+                db.session.add(alert)
+        except Exception as e:
+            print("AI ERROR:", e)
+
+    db.session.commit()
     return jsonify({"message": "Missing report created"})
+
+    # return jsonify({"message": "Missing report created"})
 
 
 # @app.route("/missing/", methods=["POST"])
@@ -331,18 +351,43 @@ def get_found():
 @app.route("/admin/alerts", methods=["GET"])
 def get_alerts():
     alerts = Alert.query.all()
+    result = []
+    for a in alerts:
+        missing = MissingReport.query.get(a.missing_id)
+        found = FoundReport.query.get(a.found_id)
+        result.append({
+            "_id": a.id,
+            "missing_id": a.missing_id,
+            "found_id": a.found_id,
+            "similarity": a.similarity,
+            "created_at": a.created_at,
+            "missing_name": missing.name if missing else "Unknown",
+            "missing_age": missing.age if missing else "Unknown",
+            "missing_gender": missing.gender if missing else "Unknown",
+            "missing_location": missing.last_seen_location if missing else "Unknown",
+            "missing_image": missing.image_path if missing else None,
+            "found_location": found.found_location if found else "Unknown",
+            "found_contact": found.contact_info if found else "Unknown",
+            "found_image": found.image_path if found else None,
+        })
+    return jsonify({"alerts": result})
 
-    return jsonify({
-        "alerts": [
-            {
-                "_id": a.id,
-                "missing_id": a.missing_id,
-                "found_id": a.found_id,
-                "similarity": a.similarity,
-                "created_at": a.created_at
-            } for a in alerts
-        ]
-    })
+
+# @app.route("/admin/alerts", methods=["GET"])
+# def get_alerts():
+#     alerts = Alert.query.all()
+
+#     return jsonify({
+#         "alerts": [
+#             {
+#                 "_id": a.id,
+#                 "missing_id": a.missing_id,
+#                 "found_id": a.found_id,
+#                 "similarity": a.similarity,
+#                 "created_at": a.created_at
+#             } for a in alerts
+#         ]
+#     })
 
 
 # =========================

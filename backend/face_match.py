@@ -4,7 +4,9 @@ def compare_faces(img1_path, img2_path):
         result = DeepFace.verify(
             img1_path,
             img2_path,
-            enforce_detection=False
+            enforce_detection=False,
+            model_name="Facenet",  
+            detector_backend="opencv"
         )
         
         return {

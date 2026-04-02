@@ -19,7 +19,26 @@ export interface AlertRecord {
   confidence: number;
   location: string;
   contactInfo: string;
+  // new fields
+  missingImage?: string;
+  foundImage?: string;
+  missingName?: string;
+  missingAge?: string;
+  missingGender?: string;
+  missingLocation?: string;
+  foundLocation?: string;
+  foundContact?: string;
+  missingId?: string | number;
+  foundId?: string | number;
 }
+
+// export interface AlertRecord {
+//   id: string;
+//   personImage: string;
+//   confidence: number;
+//   location: string;
+//   contactInfo: string;
+// }
 
 export interface AdminCaseRecord {
   id: string;
@@ -50,11 +69,28 @@ export interface BackendFoundReport {
 
 export interface BackendAlert {
   _id: string;
-  missing_id: string;
-  found_id: string;
+  missing_id: string | number;
+  found_id: string | number;
   similarity: number;
   created_at: string;
+  missing_name?: string;
+  missing_age?: string;
+  missing_gender?: string;
+  missing_location?: string;
+  last_seen_location?: string;  
+  missing_image?: string;
+  found_location?: string;
+  found_contact?: string;
+  found_image?: string;
 }
+
+// export interface BackendAlert {
+//   _id: string;
+//   missing_id: string;
+//   found_id: string;
+//   similarity: number;
+//   created_at: string;
+// }
 
 export interface CreateMissingPayload {
   name: string;
