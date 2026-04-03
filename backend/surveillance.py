@@ -67,7 +67,7 @@ def run_surveillance():
             print(f"\n[SCAN #{scan_count}] {timestamp}")
 
             # Show live feed window
-            # cv2.imshow("FindMe AI Surveillance", frame)
+            cv2.imshow("FindMe AI Surveillance", frame)
 
             # Send to backend for matching
             result = send_frame_to_backend(frame)
