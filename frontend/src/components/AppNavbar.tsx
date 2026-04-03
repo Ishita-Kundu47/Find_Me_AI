@@ -14,6 +14,7 @@ const navLinks = [
   { label: "Contact Us", href: "/contact" },
   { label: "Dashboard", href: "/dashboard", role: "user" },
   { label: "Authority", href: "/admin", role: "authority" },
+  { label: "Camera", href: "/camera", role: "user" },
 ];
 
 export default function AppNavbar() {

@@ -391,6 +391,55 @@ def get_alerts():
 
 
 # =========================
+# LIVE SERVER
+# =========================
+
+@app.route("/camera/match", methods=["POST"])
+def camera_match():
+    if "image" not in request.files:
+        return jsonify({"error": "No image"}), 400
+
+    file = request.files["image"]
+    filename = f"cam_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    file.save(filepath)
+
+    missing_reports = MissingReport.query.all()
+    matches = []
+
+    for m in missing_reports:
+        try:
+            from face_match import compare_faces
+            result = compare_faces(m.image_path, filepath)
+            distance = result.get("distance", 1)
+            similarity = round((1 - distance) * 100, 1)
+
+            if distance < 0.68:
+                matches.append({
+                    "missing_id": m.id,
+                    "name": m.name,
+                    "age": m.age,
+                    "gender": m.gender,
+                    "last_seen_location": m.last_seen_location,
+                    "image_path": m.image_path,
+                    "similarity": similarity
+                })
+        except Exception as e:
+            print("CAM ERROR:", e)
+
+    matches.sort(key=lambda x: x["similarity"], reverse=True)
+
+    return jsonify({
+        "captured_image": filepath,
+        "matches": matches,
+        "total_matches": len(matches)
+    })
+
+
+
+
+# =========================
 # RUN SERVER
 # =========================
 
